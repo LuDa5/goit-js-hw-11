@@ -3,7 +3,6 @@ import { renderGallery, clearGallery, showNotification } from './js/render-funct
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 
-
 let lightbox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
   captionDelay: 250,
@@ -12,10 +11,20 @@ let lightbox = new SimpleLightbox('.gallery a', {
 const form = document.querySelector('.search-form');
 const loader = document.querySelector('.loader');
 
+function showLoadingIndicator() {
+  loader.style.display = 'block';
+}
+
+function hideLoadingIndicator() {
+  loader.style.display = 'none';
+}
+
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
   
-  const query = event.target.elements.query.value.trim();
+  const queryInput = event.target.elements.query;
+  const query = queryInput.value.trim();
+  
   if (!query) {
     showNotification('error', 'Please enter a search term.');
     return;
@@ -23,6 +32,8 @@ form.addEventListener('submit', async (event) => {
 
   clearGallery();
   showLoadingIndicator();
+
+  queryInput.value = '';
 
   try {
     const data = await fetchImages(query);
@@ -38,11 +49,3 @@ form.addEventListener('submit', async (event) => {
     hideLoadingIndicator();
   }
 });
-
-function showLoadingIndicator() {
-  loader.style.display = 'block';
-}
-
-function hideLoadingIndicator() {
-  loader.style.display = 'none';
-}
